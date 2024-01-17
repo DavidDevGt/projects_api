@@ -66,25 +66,28 @@ $(document).ready(function () {
 
   // Función para filtrar proyectos por término de búsqueda
   function filterProjects(searchTerm) {
-    const cards = $(".card").sort(function (a, b) {
-      const matchA = $(a).text().toLowerCase().includes(searchTerm);
-      const matchB = $(b).text().toLowerCase().includes(searchTerm);
-      if (matchA && !matchB) {
-        return -1; // Prioriza a si matchA es true y matchB es false
-      } else if (!matchA && matchB) {
-        return 1; // Prioriza b si matchB es true y matchA es false
-      } else {
-        return 0; // No cambia el orden si ambos coinciden o no coinciden
-      }
+    let count = 0;
+    $(".card").each(function () {
+      const match = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
+      $(this).toggle(match);
+      if (match) count++;
     });
 
-    $("#projectsContainer").html(cards); // Actualiza el contenedor con las tarjetas reordenadas
+    if (count === 0) {
+      $("#projectsContainer").html(
+        "<p class='text-center'>No projects found.</p>"
+      );
+    }
   }
 
   // Evento para escuchar el ingreso de texto en el campo de búsqueda
   $("#searchInput").on("keyup", function (e) {
     const searchTerm = $(this).val().toLowerCase();
-    filterProjects(searchTerm);
+    if (e.key === "Enter" || searchTerm === "") {
+      loadProjects(() => filterProjects(searchTerm));
+    } else {
+      filterProjects(searchTerm);
+    }
   });
 
   // Cargar proyectos al iniciar
