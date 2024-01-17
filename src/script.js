@@ -44,7 +44,7 @@ $(document).ready(function () {
       : "";
 
     return `
-            <div class="card m-1 col-4">
+            <div class="card m-1 col-3">
                 <img src="${
                   project.image_url || "https://via.placeholder.com/300x200"
                 }" class="card-img-top" alt="${project.title}">
