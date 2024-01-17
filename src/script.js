@@ -64,21 +64,31 @@ $(document).ready(function () {
   `;
   }
 
-  // Función para filtrar proyectos por término de búsqueda
-  function filterProjects(searchTerm) {
-    let count = 0;
-    $(".card").each(function () {
-      const match = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
-      $(this).toggle(match);
-      if (match) count++;
+  // Función para ordenar proyectos por término de búsqueda
+  function sortProjects(searchTerm) {
+    const projectsArray = [];
+    $("#projectsContainer .card").each(function () {
+      const title = $(this).find(".card-title").text().toLowerCase();
+      const tech = $(this).find(".card-text").last().text().toLowerCase();
+      if (title.includes(searchTerm) || tech.includes(searchTerm)) {
+        projectsArray.unshift(this); // Agrega al inicio si coincide
+      } else {
+        projectsArray.push(this); // Agrega al final si no coincide
+      }
     });
 
-    if (count === 0) {
-      $("#projectsContainer").html(
-        "<p class='text-center'>No projects found.</p>"
-      );
-    }
+    $("#projectsContainer").empty().append(projectsArray);
   }
+
+  // Evento para escuchar el ingreso de texto en el campo de búsqueda
+  $("#searchInput").on("keyup", function (e) {
+    const searchTerm = $(this).val().toLowerCase();
+    if (e.key === "Enter" || searchTerm === "") {
+      loadProjects(() => sortProjects(searchTerm));
+    } else {
+      sortProjects(searchTerm);
+    }
+  });
 
   // Evento para escuchar el ingreso de texto en el campo de búsqueda
   $("#searchInput").on("keyup", function (e) {
