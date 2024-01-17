@@ -64,32 +64,32 @@ $(document).ready(function () {
   `;
   }
 
-// Función para filtrar proyectos por término de búsqueda
-function filterProjects(searchTerm) {
-    const matchedProjects = [];
+  // Función para filtrar proyectos por término de búsqueda
+  function filterProjects(searchTerm) {
     let count = 0;
-  
     $(".card").each(function () {
       const match = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
-      if (match) {
-        matchedProjects.push(this);
-        count++;
-      }
+      $(this).toggle(match);
+      if (match) count++;
     });
-  
+
     if (count === 0) {
-      $("#projectsContainer").html("<p class='text-center'>No se encontraron proyectos.</p>");
-    } else {
-      $("#projectsContainer").empty().append(matchedProjects);
+      $("#projectsContainer").html(
+        "<p class='text-center'>No projects found.</p>"
+      );
     }
   }
-  
+
   // Evento para escuchar el ingreso de texto en el campo de búsqueda
   $("#searchInput").on("keyup", function (e) {
     const searchTerm = $(this).val().toLowerCase();
-    filterProjects(searchTerm);
+    if (e.key === "Enter" || searchTerm === "") {
+      loadProjects(() => filterProjects(searchTerm));
+    } else {
+      filterProjects(searchTerm);
+    }
   });
-  
+
   // Cargar proyectos al iniciar
   loadProjects();
 });
