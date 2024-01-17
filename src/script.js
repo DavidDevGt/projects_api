@@ -52,7 +52,7 @@ $(document).ready(function () {
                   <h5 class="card-title">${project.title}</h5>
                   <p class="card-text mb-2">${project.description.substring(
                     0,
-                    100
+                    150
                   )}...</p>
                   <div class="mt-auto">
                       <div class="mb-2">${techBadges}</div>
@@ -64,32 +64,32 @@ $(document).ready(function () {
   `;
   }
 
-  // Función para filtrar proyectos por término de búsqueda
-  function filterProjects(searchTerm) {
+// Función para filtrar proyectos por término de búsqueda
+function filterProjects(searchTerm) {
+    const matchedProjects = [];
     let count = 0;
+  
     $(".card").each(function () {
       const match = $(this).text().toLowerCase().indexOf(searchTerm) > -1;
-      $(this).toggle(match);
-      if (match) count++;
+      if (match) {
+        matchedProjects.push(this);
+        count++;
+      }
     });
-
+  
     if (count === 0) {
-      $("#projectsContainer").html(
-        "<p class='text-center'>No projects found.</p>"
-      );
+      $("#projectsContainer").html("<p class='text-center'>No se encontraron proyectos.</p>");
+    } else {
+      $("#projectsContainer").empty().append(matchedProjects);
     }
   }
-
+  
   // Evento para escuchar el ingreso de texto en el campo de búsqueda
   $("#searchInput").on("keyup", function (e) {
     const searchTerm = $(this).val().toLowerCase();
-    if (e.key === "Enter" || searchTerm === "") {
-      loadProjects(() => filterProjects(searchTerm));
-    } else {
-      filterProjects(searchTerm);
-    }
+    filterProjects(searchTerm);
   });
-
+  
   // Cargar proyectos al iniciar
   loadProjects();
 });
