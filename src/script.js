@@ -64,40 +64,27 @@ $(document).ready(function () {
   `;
   }
 
-  // Función para ordenar proyectos por término de búsqueda
-  function sortProjects(searchTerm) {
-    const projectsArray = [];
-    $("#projectsContainer .card").each(function () {
-      const title = $(this).find(".card-title").text().toLowerCase();
-      const tech = $(this).find(".card-text").last().text().toLowerCase();
-      if (title.includes(searchTerm) || tech.includes(searchTerm)) {
-        projectsArray.unshift(this); // Agrega al inicio si coincide
+  // Función para filtrar proyectos por término de búsqueda
+  function filterProjects(searchTerm) {
+    const cards = $(".card").sort(function (a, b) {
+      const matchA = $(a).text().toLowerCase().includes(searchTerm);
+      const matchB = $(b).text().toLowerCase().includes(searchTerm);
+      if (matchA && !matchB) {
+        return -1; // Prioriza a si matchA es true y matchB es false
+      } else if (!matchA && matchB) {
+        return 1; // Prioriza b si matchB es true y matchA es false
       } else {
-        projectsArray.push(this); // Agrega al final si no coincide
+        return 0; // No cambia el orden si ambos coinciden o no coinciden
       }
     });
 
-    $("#projectsContainer").empty().append(projectsArray);
+    $("#projectsContainer").html(cards); // Actualiza el contenedor con las tarjetas reordenadas
   }
 
   // Evento para escuchar el ingreso de texto en el campo de búsqueda
   $("#searchInput").on("keyup", function (e) {
     const searchTerm = $(this).val().toLowerCase();
-    if (e.key === "Enter" || searchTerm === "") {
-      loadProjects(() => sortProjects(searchTerm));
-    } else {
-      sortProjects(searchTerm);
-    }
-  });
-
-  // Evento para escuchar el ingreso de texto en el campo de búsqueda
-  $("#searchInput").on("keyup", function (e) {
-    const searchTerm = $(this).val().toLowerCase();
-    if (e.key === "Enter" || searchTerm === "") {
-      loadProjects(() => filterProjects(searchTerm));
-    } else {
-      filterProjects(searchTerm);
-    }
+    filterProjects(searchTerm);
   });
 
   // Cargar proyectos al iniciar
